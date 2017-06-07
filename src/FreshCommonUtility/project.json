@@ -1,0 +1,26 @@
+{
+    "dependencies": {
+        "Microsoft.AspNetCore.Http": "1.1.0",
+        "Microsoft.Extensions.Configuration": "1.0.0",
+        "Microsoft.Extensions.Configuration.Json": "1.0.0",
+        "Microsoft.Extensions.DependencyInjection": "1.0.0",
+        "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
+        "NETStandard.Library": "1.6.0",
+        "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
+        "StackExchange.Redis": "1.1.608",
+        "Dapper": "1.50.2",
+        "MySql.Data.Core": "7.0.4-IR-191",
+        "System.Text.Encoding.CodePages": "4.0.1",
+        "MailKit": "1.10.1",
+        "Npgsql": "3.1.8"
+    },
+    "frameworks": {
+        "netstandard1.6": {
+            "imports": "dnxcore50"
+        }
+    },
+    "version": "1.0.0.1",
+    "buildOptions": {
+        "xmlDoc": true
+    }
+}
