@@ -67,27 +67,15 @@ namespace FreshCommonUtility.SqlHelper
         public static string GetConnectionString() => ConnectionString;
 
         /// <summary>
-        /// set connection type
-        /// </summary>
-        /// <param name="dbtype"></param>
-        public static void SetConnectionType(SimpleCRUD.Dialect dbtype)
-        {
-            _dbtype = dbtype;
-        }
-
-        /// <summary>
-        /// connection type
-        /// </summary>
-        private static SimpleCRUD.Dialect _dbtype;
-
-        /// <summary>
-        /// Get open connection
+        /// <para>Get open connection</para>
+        /// <para>if you want to link mysql db,please add SslMode=None; in you link string.</para>
         /// </summary>
         /// <param name="connectionString">DIV you connection string</param>
         /// <returns>IDbConection object</returns>
         public static IDbConnection GetOpenConnection(string connectionString = null)
         {
-            if (string.IsNullOrEmpty(connectionString))
+            var _dbtype = SimpleCRUD.GetDialect();
+            if (!string.IsNullOrEmpty(connectionString))
             {
                 ConnectionString = connectionString;
             }

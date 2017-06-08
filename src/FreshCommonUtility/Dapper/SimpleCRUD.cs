@@ -41,7 +41,16 @@ namespace FreshCommonUtility.Dapper
         /// Returns the current dialect name
         /// </summary>
         /// <returns></returns>
-        public static string GetDialect()
+        public static Dialect GetDialect()
+        {
+            return _dialect;
+        }
+
+        /// <summary>
+        /// Returns the current dialect name
+        /// </summary>
+        /// <returns></returns>
+        public static string GetDialectString()
         {
             return _dialect.ToString();
         }
