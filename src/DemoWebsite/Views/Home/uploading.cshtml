@@ -1,0 +1,38 @@
+﻿<form asp-action="Uploading" asp-controller="Home" method="post" enctype="multipart/form-data">
+    <input type="file" name="files" multiple />
+    <input type="submit" value="upload selected files" />
+</form>
+
+<form method="post" enctype="multipart/form-data">
+    <input type="file" id="files" name="files" multiple />
+    <input type="button" id="upload" value="upload selected files" />
+</form>
+@ViewBag.Message
+@section scripts{
+<script>
+    $(document).ready(function () {
+        $("#upload").click(function (evt) {
+            var fileUpload = $("#files").get(0);
+            var files = fileUpload.files;
+            var data = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                data.append(files[i].name, files[i]);
+            }
+            $.ajax({
+                type: "post",
+                url: "/Home/UploadFilesAjax",
+                contentType: false,
+                processData: false,
+                data: data,
+                sucess: function (message) {
+                    alert(message);
+
+                },
+                error: function () {
+                    alert("There was error upload files");
+                }
+            });
+        });
+    });
+</script>
+}
