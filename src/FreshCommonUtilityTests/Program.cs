@@ -100,7 +100,7 @@ namespace FreshCommonUtilityTests
         private static void SetupMySql()
         {
             using (var connection = new MySqlConnection(
-                $"Server={"localhost"};Port={"3306"};User Id={"FreshMan"};Password={"qinxianbo"};Database={"sys"};SslMode=None"))
+                $"Server={"localhost"};Port={"3306"};User Id={"FreshMan"};Password={"dbpassword"};Database={"sys"};SslMode=None"))
             {
                 connection.Open();
                 // drop  database 
@@ -110,7 +110,7 @@ namespace FreshCommonUtilityTests
             System.Threading.Thread.Sleep(1000);
 
             using (var connection = new MySqlConnection(
-                $"Server={"localhost"};Port={"3306"};User Id={"FreshMan"};Password={"qinxianbo"};Database={"testdb"};SslMode=None"))
+                $"Server={"localhost"};Port={"3306"};User Id={"FreshMan"};Password={"dbpassword"};Database={"testdb"};SslMode=None"))
             {
                 connection.Open();
                 connection.Execute(@" create table Users (Id INTEGER PRIMARY KEY AUTO_INCREMENT, Name nvarchar(100) not null, Age int not null, ScheduledDayOff int null, CreatedDate datetime default current_timestamp ) ");

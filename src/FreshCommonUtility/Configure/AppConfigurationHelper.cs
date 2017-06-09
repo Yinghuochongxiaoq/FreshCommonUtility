@@ -47,11 +47,18 @@ namespace FreshCommonUtility.Configure
         /// <returns></returns>
         public static string GetAppSettings(string key, string filePath = "appsettings.json")
         {
-            IConfiguration config = new ConfigurationBuilder()
-                .Add(new JsonConfigurationSource { Path = filePath, ReloadOnChange = true })
-                .Build();
-            var appconfig = config.GetSection(key);
-            return appconfig.Value;
+            try
+            {
+                IConfiguration config = new ConfigurationBuilder()
+                    .Add(new JsonConfigurationSource { Path = filePath, ReloadOnChange = true })
+                    .Build();
+                var appconfig = config.GetSection(key);
+                return appconfig.Value;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

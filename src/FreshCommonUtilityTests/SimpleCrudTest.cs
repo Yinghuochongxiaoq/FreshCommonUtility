@@ -48,7 +48,7 @@ namespace FreshCommonUtilityTests
         /// <param name="hostname"></param>
         /// <param name="port"></param>
         /// <param name="dbName"></param>
-        public SimpleCrudTest(SimpleCRUD.Dialect dbtype, string userName = "FreshMan", string password = "qinxianbo", string hostname = "localhost", int port = 3306, string dbName = "testdb")
+        public SimpleCrudTest(SimpleCRUD.Dialect dbtype, string userName = "FreshMan", string password = "dbpassword", string hostname = "localhost", int port = 3306, string dbName = "testdb")
         {
             _userName = userName;
             _password = password;
