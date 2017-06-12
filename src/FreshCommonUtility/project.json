@@ -19,7 +19,7 @@
             "imports": "dnxcore50"
         }
     },
-    "version": "1.0.1.0",
+    "version": "1.0.1.1",
     "buildOptions": {
         "xmlDoc": true
     }

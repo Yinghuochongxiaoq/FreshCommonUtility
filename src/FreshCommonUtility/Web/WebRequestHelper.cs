@@ -31,11 +31,12 @@ namespace FreshCommonUtility.Web
         public static string GetStringFromParameters(this HttpContext context, string key)
         {
             var value = string.Empty;
-            if (string.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(key) || context == null)
             {
                 return value;
             }
-            if (context != null) value = context.Request?.Query[key];
+            value = context.Request?.Query[key];
+            if (string.IsNullOrEmpty(value)) value = context.Request?.Form[key];
             return value;
         }
 
@@ -48,11 +49,13 @@ namespace FreshCommonUtility.Web
         public static int GetIntFromParameters(this HttpContext context, string key)
         {
             var value = default(int);
-            if (!string.IsNullOrEmpty(key))
+            if (!string.IsNullOrEmpty(key) && context != null)
             {
-                value = (!string.IsNullOrEmpty(context.Request?.Query[key])
-                         && IsNumeric(context.Request?.Query[key]))
-                            ? int.Parse(context.Request?.Query[key])
+                var stringValue = context.Request?.Query[key];
+                if (string.IsNullOrEmpty(stringValue)) stringValue = context.Request?.Form[key];
+                value = (!string.IsNullOrEmpty(stringValue)
+                         && IsNumeric(stringValue))
+                            ? int.Parse(stringValue)
                             : default(int);
             }
             return value;
@@ -67,11 +70,13 @@ namespace FreshCommonUtility.Web
         public static DateTime GetDateTimeFromParameters(this HttpContext context, string key)
         {
             var value = new DateTime(1900, 01, 01);
-            if (string.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(key) || context == null)
             {
                 return value;
             }
-            return !DateTime.TryParse(context.Request?.Query[key], out value) ? new DateTime(1900, 1, 1) : value;
+            var stringValue = context.Request?.Query[key];
+            if (string.IsNullOrEmpty(stringValue)) stringValue = context.Request?.Form[key];
+            return !DateTime.TryParse(stringValue, out value) ? new DateTime(1900, 1, 1) : value;
         }
 
         /// <summary>
@@ -81,7 +86,7 @@ namespace FreshCommonUtility.Web
         /// <param name="key">params key</param>
         /// <param name="separator">split char</param>
         /// <returns></returns>
-        public static List<int> GetListIntFromParameters(this HttpContext context,string key, char separator)
+        public static List<int> GetListIntFromParameters(this HttpContext context, string key, char separator)
         {
             var strList = context.GetStringFromParameters(key);
             if (string.IsNullOrEmpty(strList))
