@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Dapper;
 using FreshCommonUtility.Dapper;
+using FreshCommonUtility.Security;
 using FreshCommonUtility.SqlHelper;
 using MySql.Data.MySqlClient;
 using Npgsql;
@@ -20,9 +21,15 @@ namespace FreshCommonUtilityTests
             //SetUp();
             //RunTestSqlServer();
 
-            SetupMySql();
-            RunTestMySql();
-            Console.ReadKey();
+            //SetupMySql();
+            //RunTestMySql();
+
+            var testStr = "FreshMan";
+            var enCodeStr = RsaHelper.RsaEncode(testStr);
+            var deCodeStr = RsaHelper.RsaDeCode(enCodeStr);
+            deCodeStr.IsEqualTo(testStr);
+
+        Console.ReadKey();
         }
 
         /// <summary>

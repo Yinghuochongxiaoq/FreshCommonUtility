@@ -4351,6 +4351,7 @@
           "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
           "MySql.Data.Core": "7.0.4-IR-191",
           "NETStandard.Library": "1.6.0",
+          "Newtonsoft.Json": "9.0.1",
           "Npgsql": "3.1.8",
           "StackExchange.Redis": "1.1.608",
           "System.Text.Encoding.CodePages": "4.0.1"
@@ -8962,6 +8963,7 @@
           "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
           "MySql.Data.Core": "7.0.4-IR-191",
           "NETStandard.Library": "1.6.0",
+          "Newtonsoft.Json": "9.0.1",
           "Npgsql": "3.1.8",
           "StackExchange.Redis": "1.1.608",
           "System.Text.Encoding.CodePages": "4.0.1"
@@ -13486,6 +13488,7 @@
           "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
           "MySql.Data.Core": "7.0.4-IR-191",
           "NETStandard.Library": "1.6.0",
+          "Newtonsoft.Json": "9.0.1",
           "Npgsql": "3.1.8",
           "StackExchange.Redis": "1.1.608",
           "System.Text.Encoding.CodePages": "4.0.1"
@@ -18141,6 +18144,7 @@
           "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
           "MySql.Data.Core": "7.0.4-IR-191",
           "NETStandard.Library": "1.6.0",
+          "Newtonsoft.Json": "9.0.1",
           "Npgsql": "3.1.8",
           "StackExchange.Redis": "1.1.608",
           "System.Text.Encoding.CodePages": "4.0.1"
@@ -22700,6 +22704,7 @@
           "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
           "MySql.Data.Core": "7.0.4-IR-191",
           "NETStandard.Library": "1.6.0",
+          "Newtonsoft.Json": "9.0.1",
           "Npgsql": "3.1.8",
           "StackExchange.Redis": "1.1.608",
           "System.Text.Encoding.CodePages": "4.0.1"
