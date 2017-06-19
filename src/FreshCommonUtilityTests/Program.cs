@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Dapper;
+using FreshCommonUtility.CoreModel;
 using FreshCommonUtility.Dapper;
 using FreshCommonUtility.Security;
 using FreshCommonUtility.SqlHelper;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using Npgsql;
 
 namespace FreshCommonUtilityTests
@@ -18,18 +21,22 @@ namespace FreshCommonUtilityTests
     {
         public static void Main(string[] args)
         {
+            TimeCompare(UseTransReflection);
+            TimeCompare(JsonSerialize);
+            TimeCompare(LambdaExpressionV2);
+            TimeCompare(LambdaExpression);
             //SetUp();
             //RunTestSqlServer();
 
             //SetupMySql();
             //RunTestMySql();
 
-            var testStr = "FreshMan";
-            var enCodeStr = RsaHelper.RsaEncode(testStr);
-            var deCodeStr = RsaHelper.RsaDeCode(enCodeStr);
-            deCodeStr.IsEqualTo(testStr);
+            //var testStr = "FreshMan";
+            //var enCodeStr = RsaHelper.RsaEncode(testStr);
+            //var deCodeStr = RsaHelper.RsaDeCode(enCodeStr);
+            //deCodeStr.IsEqualTo(testStr);
 
-        Console.ReadKey();
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -206,6 +213,150 @@ namespace FreshCommonUtilityTests
             Console.WriteLine("Time elapsed: {0}", stopwatch.Elapsed);
 
             Console.Write("MySQL testing complete.");
+        }
+
+        /// <summary>
+        /// 模板调用
+        /// </summary>
+        /// <param name="function"></param>
+        private static void TimeCompare(Action function)
+        {
+            var times = 1;
+            var useTimes = 1000000;
+            var timeWatch = new Stopwatch();
+            timeWatch.Start();
+            for (int i = 0; i < times; i++)
+            {
+                for (int j = 0; j < useTimes; j++)
+                {
+                    function();
+                }
+            }
+            timeWatch.Stop();
+            var time = timeWatch.ElapsedMilliseconds / times;
+            Console.WriteLine($"{function.GetMethodInfo().Name} use time:{time} ms");
+        }
+
+        /// <summary>
+        /// 反射拷贝对象
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="Tout"></typeparam>
+        /// <param name="tIn"></param>
+        /// <returns></returns>
+        private static Tout TransReflection<TIn, Tout>(TIn tIn)
+        {
+            Tout tout = Activator.CreateInstance<Tout>();
+            var tIntype = tIn.GetType();
+            foreach (var itemout in tout.GetType().GetProperties())
+            {
+                var itemIn = tIntype.GetProperty(itemout.Name);
+                if (itemIn != null)
+                {
+                    itemout.SetValue(tout, itemIn.GetValue(tIn));
+                }
+            }
+            return tout;
+        }
+
+        /// <summary>
+        /// 调用反射执行
+        /// </summary>
+        private static void UseTransReflection()
+        {
+            var u = new User { Age = 10, CreatedDate = DateTime.Now, Id = 100, Name = "FreshMan" };
+            var t = TransReflection<User, User>(u);
+        }
+
+        /// <summary>
+        /// 使用序列化的方式执行
+        /// </summary>
+        private static void JsonSerialize()
+        {
+            var u = new User { Age = 10, CreatedDate = DateTime.Now, Id = 100, Name = "FreshMan" };
+            var t = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(u));
+        }
+
+        private static Dictionary<string, object> _Dic = new Dictionary<string, object>();
+
+        /// <summary>
+        /// Lambda表达式树拷贝
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
+        /// <param name="tIn"></param>
+        /// <returns></returns>
+        private static TOut TransExp<TIn, TOut>(TIn tIn)
+        {
+            string key = $"trans_exp_{typeof(TIn).FullName}_{typeof(TOut).FullName}";
+            if (!_Dic.ContainsKey(key))
+            {
+                ParameterExpression parameterExpression = Expression.Parameter(typeof(TIn), "p");
+                List<MemberBinding> memberBindingList = new List<MemberBinding>();
+
+                foreach (var item in typeof(TOut).GetProperties())
+                {
+                    if (!item.CanWrite) continue;
+                    MemberExpression property = Expression.Property(parameterExpression,
+                        typeof(TIn).GetProperty(item.Name));
+                    MemberBinding memberBinding = Expression.Bind(item, property);
+                    memberBindingList.Add(memberBinding);
+                }
+                MemberInitExpression memberInitExpression = Expression.MemberInit(Expression.New(typeof(TOut)),
+                    memberBindingList.ToArray());
+                Expression<Func<TIn, TOut>> lambda = Expression.Lambda<Func<TIn, TOut>>(memberInitExpression,
+                    new ParameterExpression[] { parameterExpression });
+                Func<TIn, TOut> func = lambda.Compile();
+                _Dic[key] = func;
+            }
+            return ((Func<TIn, TOut>)_Dic[key])(tIn);
+        }
+
+        /// <summary>
+        /// Lambda表达式树拷贝
+        /// </summary>
+        private static void LambdaExpression()
+        {
+            var u = new User { Age = 10, CreatedDate = DateTime.Now, Id = 100, Name = "FreshMan" };
+            var t = TransExp<User, User>(u);
+        }
+
+        /// <summary>
+        /// 泛型优化之Lambda表达式树拷贝
+        /// </summary>
+        private static void LambdaExpressionV2()
+        {
+            var u = new User { Age = 10, CreatedDate = DateTime.Now, Id = 100, Name = "FreshMan" };
+            var t = TransExpV2<User, User>.Trans(u);
+        }
+    }
+
+    public static class TransExpV2<TIn, TOut>
+    {
+        private static readonly Func<TIn, TOut> cache = GetFunc();
+
+        private static Func<TIn, TOut> GetFunc()
+        {
+            ParameterExpression parameterExpression = Expression.Parameter(typeof(TIn), "p");
+            List<MemberBinding> memberBindingList = new List<MemberBinding>();
+
+            foreach (var item in typeof(TOut).GetProperties())
+            {
+                if (!item.CanWrite) continue;
+                MemberExpression property = Expression.Property(parameterExpression,
+                    typeof(TIn).GetProperty(item.Name));
+                MemberBinding memberBinding = Expression.Bind(item, property);
+                memberBindingList.Add(memberBinding);
+            }
+            MemberInitExpression memberInitExpression = Expression.MemberInit(Expression.New(typeof(TOut)),
+                memberBindingList.ToArray());
+            Expression<Func<TIn, TOut>> lambda = Expression.Lambda<Func<TIn, TOut>>(memberInitExpression, parameterExpression);
+            return lambda.Compile();
+        }
+
+        public static TOut Trans(TIn tIn)
+        {
+            return cache(tIn);
         }
     }
 }
