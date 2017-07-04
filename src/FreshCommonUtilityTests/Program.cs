@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Dapper;
 using FreshCommonUtility.CoreModel;
@@ -21,10 +22,19 @@ namespace FreshCommonUtilityTests
     {
         public static void Main(string[] args)
         {
-            TimeCompare(UseTransReflection);
-            TimeCompare(JsonSerialize);
-            TimeCompare(LambdaExpressionV2);
-            TimeCompare(LambdaExpression);
+            //Expression numA = Expression.Constant(6);
+            //Console.WriteLine("NodeType: {0}, Type: {1}", numA.NodeType, numA.Type);
+            //Expression numB = Expression.Constant(3);
+            //Console.WriteLine("NodeType: {0}, Type: {1}", numB.NodeType, numB.Type);
+
+            //BinaryExpression add = Expression.Add(numA, numB);
+            //Console.WriteLine("NodeType: {0}, Type: {1}", add.NodeType, add.Type);
+
+            //Console.WriteLine(add);
+            //TimeCompare(UseTransReflection);
+            //TimeCompare(JsonSerialize);
+            //TimeCompare(LambdaExpressionV2);
+            //TimeCompare(LambdaExpression);
             //SetUp();
             //RunTestSqlServer();
 
@@ -36,6 +46,17 @@ namespace FreshCommonUtilityTests
             //var deCodeStr = RsaHelper.RsaDeCode(enCodeStr);
             //deCodeStr.IsEqualTo(testStr);
 
+            var stopwatch = Stopwatch.StartNew();
+            var pgtester = new TestClass();
+            foreach (var method in typeof(TestClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            {
+                var testwatch = Stopwatch.StartNew();
+                Console.Write("Running " + method.Name + " in FreshCommonUtilityNetTest:");
+                method.Invoke(pgtester, null);
+                Console.WriteLine(" - OK! {0}ms", testwatch.ElapsedMilliseconds);
+            }
+            stopwatch.Stop();
+            Console.WriteLine("Time elapsed: {0}", stopwatch.Elapsed);
             Console.ReadKey();
         }
 
@@ -222,7 +243,7 @@ namespace FreshCommonUtilityTests
         private static void TimeCompare(Action function)
         {
             var times = 1;
-            var useTimes = 1000000;
+            var useTimes = 1;
             var timeWatch = new Stopwatch();
             timeWatch.Start();
             for (int i = 0; i < times; i++)
@@ -286,7 +307,7 @@ namespace FreshCommonUtilityTests
         /// <typeparam name="TOut"></typeparam>
         /// <param name="tIn"></param>
         /// <returns></returns>
-        private static TOut TransExp<TIn, TOut>(TIn tIn)
+        private static TOut TransExp<TIn, TOut>(TIn tIn) where TOut : new() where TIn : new()
         {
             string key = $"trans_exp_{typeof(TIn).FullName}_{typeof(TOut).FullName}";
             if (!_Dic.ContainsKey(key))
@@ -326,8 +347,11 @@ namespace FreshCommonUtilityTests
         /// </summary>
         private static void LambdaExpressionV2()
         {
-            var u = new User { Age = 10, CreatedDate = DateTime.Now, Id = 100, Name = "FreshMan" };
-            var t = TransExpV2<User, User>.Trans(u);
+            //var u = new User { Age = 10, CreatedDate = DateTime.Now, Id = 100, Name = "FreshMan" };
+            //var t = TransExpV2<User, User>.Trans(u);
+            //var appSetting = new AppSettingsModel { EmailServerConfig = new EmailServerConfigModel { EmailSmtpServerAddress = "a", FromEmailAddress = "b", FromEmailPassword = "c", FromName = "d", PasswordEnabledSecret = false }, MySqlConnectionString = "e", RedisCaching = new RedisCaching { ConnectionString = "f", Enabled = false }, TestClasss = new List<Core.Model.TestClass> { new TestClass { name = "10" }, new TestClass { tests = "20" }, new TestClass { tests = "30" } } };
+            //var t = TransExpV2<AppSettingsModel, AppSettingsModel>.Trans(appSetting);
+            //appSetting.TestClasss.Clear();
         }
     }
 
@@ -343,8 +367,7 @@ namespace FreshCommonUtilityTests
             foreach (var item in typeof(TOut).GetProperties())
             {
                 if (!item.CanWrite) continue;
-                MemberExpression property = Expression.Property(parameterExpression,
-                    typeof(TIn).GetProperty(item.Name));
+                MemberExpression property = Expression.Property(parameterExpression, typeof(TIn).GetProperty(item.Name));
                 MemberBinding memberBinding = Expression.Bind(item, property);
                 memberBindingList.Add(memberBinding);
             }
