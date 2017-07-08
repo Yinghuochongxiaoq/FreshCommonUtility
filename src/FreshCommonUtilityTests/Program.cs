@@ -35,11 +35,11 @@ namespace FreshCommonUtilityTests
             //TimeCompare(JsonSerialize);
             //TimeCompare(LambdaExpressionV2);
             //TimeCompare(LambdaExpression);
-            //SetUp();
-            //RunTestSqlServer();
+            SetUp();
+            RunTestSqlServer();
 
-            //SetupMySql();
-            //RunTestMySql();
+            SetupMySql();
+            RunTestMySql();
 
             //var testStr = "FreshMan";
             //var enCodeStr = RsaHelper.RsaEncode(testStr);
@@ -65,7 +65,7 @@ namespace FreshCommonUtilityTests
         /// </summary>
         private static void SetUp()
         {
-            using (var connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;Initial Catalog=Master;Integrated Security=True;"))
+            using (var connection = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=true"))
             {
                 connection.Open();
                 try
@@ -78,7 +78,7 @@ namespace FreshCommonUtilityTests
                 connection.Execute(@" CREATE DATABASE DapperSimpleCrudTestDb; ");
             }
 
-            using (var connection = new SqlConnection(@"Data Source = (LocalDB)\v11.0;Initial Catalog=DapperSimpleCrudTestDb;Integrated Security=True;MultipleActiveResultSets=true;"))
+            using (var connection = new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB;Initial Catalog=DapperSimpleCrudTestDb;Integrated Security=True;MultipleActiveResultSets=true;"))
             {
                 connection.Open();
                 connection.Execute(@" create table Users (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, Age int not null, ScheduledDayOff int null, CreatedDate datetime DEFAULT(getdate())) ");
@@ -135,7 +135,7 @@ namespace FreshCommonUtilityTests
         private static void SetupMySql()
         {
             using (var connection = new MySqlConnection(
-                $"Server={"localhost"};Port={"3306"};User Id={"FreshMan"};Password={"dbpassword"};Database={"sys"};SslMode=None"))
+                $"Server={"localhost"};Port={"3306"};User Id={"FreshMan"};Password={"qinxianbo"};Database={"sys"};SslMode=None"))
             {
                 connection.Open();
                 // drop  database 
@@ -145,7 +145,7 @@ namespace FreshCommonUtilityTests
             System.Threading.Thread.Sleep(1000);
 
             using (var connection = new MySqlConnection(
-                $"Server={"localhost"};Port={"3306"};User Id={"FreshMan"};Password={"dbpassword"};Database={"testdb"};SslMode=None"))
+                $"Server={"localhost"};Port={"3306"};User Id={"FreshMan"};Password={"qinxianbo"};Database={"testdb"};SslMode=None"))
             {
                 connection.Open();
                 connection.Execute(@" create table Users (Id INTEGER PRIMARY KEY AUTO_INCREMENT, Name nvarchar(100) not null, Age int not null, ScheduledDayOff int null, CreatedDate datetime default current_timestamp ) ");
@@ -180,7 +180,7 @@ namespace FreshCommonUtilityTests
             //write result
             Console.WriteLine($"Time elapsed :{stopwatch.Elapsed}");
 
-            using (var connection = SqlConnectionHelper.GetOpenConnection(@"Data Source=(LocalDB)\v11.0;Initial Catalog=Master;Integrated Security=True"))
+            using (var connection = SqlConnectionHelper.GetOpenConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Master;Integrated Security=True"))
             {
                 try
                 {

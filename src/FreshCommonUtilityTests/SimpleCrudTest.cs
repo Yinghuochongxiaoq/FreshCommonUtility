@@ -48,7 +48,7 @@ namespace FreshCommonUtilityTests
         /// <param name="hostname"></param>
         /// <param name="port"></param>
         /// <param name="dbName"></param>
-        public SimpleCrudTest(SimpleCRUD.Dialect dbtype, string userName = "FreshMan", string password = "dbpassword", string hostname = "localhost", int port = 3306, string dbName = "testdb")
+        public SimpleCrudTest(SimpleCRUD.Dialect dbtype, string userName = "FreshMan", string password = "qinxianbo", string hostname = "localhost", int port = 3306, string dbName = "testdb")
         {
             _userName = userName;
             _password = password;
@@ -67,7 +67,7 @@ namespace FreshCommonUtilityTests
             IDbConnection connection;
             var postgreConnectionString = $"Server={_hostName};Port={_port};User Id={_userName};Password={_password};Database={_dbName};";
             var mysqlConnectionString = $"Server={_hostName};Port={_port};User Id={_userName};Password={_password};Database={_dbName};SslMode=None";
-            var sqlserverConnectionString = @"Data Source = (LocalDB)\v11.0;Initial Catalog=DapperSimpleCrudTestDb;Integrated Security=True;MultipleActiveResultSets=true;";
+            var sqlserverConnectionString = @"Data Source = (LocalDB)\MSSQLLocalDB;Initial Catalog=DapperSimpleCrudTestDb;Integrated Security=True;MultipleActiveResultSets=true;";
             var _dbtype = SimpleCRUD.GetDialectString();
             var dictionary = new Dictionary<string, string>()
             {
