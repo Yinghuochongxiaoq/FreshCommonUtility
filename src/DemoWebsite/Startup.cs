@@ -12,6 +12,7 @@ using FreshCommonUtility.Dapper;
 using FreshCommonUtility.SqlHelper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -41,7 +42,7 @@ namespace DemoWebsite
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
             Configuration = builder.Build();
-            SetupDB();
+            //SetupDB();
         }
 
         /// <summary>
@@ -62,6 +63,11 @@ namespace DemoWebsite
             services.AddMvc();
             //Add options
             services.AddOptions();
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = int.MaxValue;
+                x.MultipartBodyLengthLimit = int.MaxValue;
+            });
             services.Configure<AppSettingsModel>(Configuration.GetSection("AppSettings"));
         }
 
@@ -114,7 +120,7 @@ namespace DemoWebsite
             /// <summary>
             /// Db password
             /// </summary>
-            string _password = "dbpassword";
+            string _password = "qinxianbo";
 
             /// <summary>
             /// Db host name
